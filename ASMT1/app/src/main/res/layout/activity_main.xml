@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="#FFFDD0"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/mainImageView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!-- n-1 -->
+        <ImageView
+            android:id="@+id/image1"
+            android:clickable="true"
+            android:onClick="makeImage1Main"
+            android:layout_gravity="center"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="8dp"
+             />
+
+        <!-- n-2 -->
+        <ImageView
+            android:id="@+id/image2"
+            android:clickable="true"
+            android:onClick="makeImage2Main"
+            android:layout_gravity="center"
+            android:layout_width="100dp"
+            android:layout_margin="8dp"
+            android:layout_height="100dp" />
+
+        <!-- n-3 -->
+        <ImageView
+            android:id="@+id/image3"
+            android:clickable="true"
+            android:onClick="makeImage3Main"
+            android:layout_gravity="center"
+            android:layout_width="100dp"
+            android:layout_margin="8dp"
+            android:layout_height="100dp" />
+    </LinearLayout>
+
+    <Button
+        android:text="Take Picture"
+        android:onClick="startCamera"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        />
+
+</LinearLayout>
