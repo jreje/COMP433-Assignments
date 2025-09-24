@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <com.example.cw2.MyDrawingArea
+        android:id="@+id/customView"
+        android:onClick="reset"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        />
+
+    <Button
+        android:text="Reset"
+        android:id="@+id/resetButton"
+        android:onClick="reset"
+        android:layout_gravity="center"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        />
+
+    <Button
+        android:text="Save"
+        android:id="@+id/saveButton"
+        android:onClick="saveDrawing"
+        android:layout_gravity="center"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        />
+
+
+</LinearLayout>
