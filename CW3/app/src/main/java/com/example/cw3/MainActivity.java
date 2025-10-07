@@ -1,8 +1,10 @@
 package com.example.cw3;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
     // File Variables
     File drawingsDirectory;
     File[] drawingFilesList;
+    // Gallery
+    ImageView drawing1View;
+    ImageView drawing2View;
+    ImageView drawing3View;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,12 @@ public class MainActivity extends AppCompatActivity {
         });
         drawingAreaView = findViewById(R.id.drawingArea);
         drawingArea = findViewById(R.id.drawingArea);
+        drawing1View = findViewById(R.id.drawing1);
+        drawing2View = findViewById(R.id.drawing2);
+        drawing3View = findViewById(R.id.drawing3);
+        drawingsDirectory = getFilesDir();
+        drawingFilesList = drawingsDirectory.listFiles();
+        updateGallery();
     }
 
     public void clear(View view) {
@@ -44,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void save(View view) {
+        drawingArea = findViewById(R.id.drawingArea);
         Bitmap drawingBitmap = drawingArea.getBitmap();
         try {
             // Create file
@@ -58,8 +71,32 @@ public class MainActivity extends AppCompatActivity {
 
             // Update files
             drawingFilesList = drawingsDirectory.listFiles();
+            updateGallery();
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    // Load the saved images
+    private void updateGallery() {
+        // Set every underlying image to the most recent file. The first image is always "profileinstalled"
+        try {
+            if (drawingFilesList.length >= 2) {
+                // decode file into bitmap
+                Bitmap bitmap = BitmapFactory.decodeFile(drawingFilesList[drawingFilesList.length - 1].getAbsolutePath());
+                // Set image to bitmap
+                drawing1View.setImageBitmap(bitmap);
+            }
+            if (drawingFilesList.length >= 3) {
+                Bitmap bitmap = BitmapFactory.decodeFile(drawingFilesList[drawingFilesList.length - 2].getAbsolutePath());
+                drawing2View.setImageBitmap(bitmap);
+            }
+            if (drawingFilesList.length >= 4) {
+                Bitmap bitmap = BitmapFactory.decodeFile(drawingFilesList[drawingFilesList.length - 3].getAbsolutePath());
+                drawing3View.setImageBitmap(bitmap);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
