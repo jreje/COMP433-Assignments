@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/drawingArea"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_margin="16dp" />
+        />
 
     <EditText
         android:id="@+id/tagsInput"
@@ -58,6 +58,7 @@
         android:layout_marginTop="16dp" />
 
     <com.google.android.material.button.MaterialButton
+        android:onClick="save"
         android:id="@+id/saveButton"
         android:text="Save"
         android:textSize="20sp"
