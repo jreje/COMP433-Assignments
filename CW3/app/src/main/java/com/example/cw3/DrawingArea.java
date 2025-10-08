@@ -47,7 +47,7 @@ public class DrawingArea extends View {
         p.setStrokeWidth(5f);
 
         canvas.drawPath(drawing, p);
-        invalidate();
+        //invalidate();
     }
 
     @Override
