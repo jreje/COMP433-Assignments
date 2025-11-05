@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ASMT3</string>
+    <string name="drawing_info">%1$s\n%2$s</string>
+</resources>
