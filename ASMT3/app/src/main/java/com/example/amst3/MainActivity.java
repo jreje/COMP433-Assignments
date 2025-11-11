@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
     }
 
     public void startPhotoTaggerIntent(View view) {
@@ -29,14 +30,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(sketchTaggerIntent);
     }
 
-    public void clear(View view) {
-    }
-
-    public void save(View view) {
-    }
-
-    public void find(View view) {
-    }
+//    public void clear(View view) {
+//    }
+//
+//    public void save(View view) {
+//    }
+//
+//    public void find(View view) {
+//    }
 
 
 }
