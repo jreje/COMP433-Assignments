@@ -22,7 +22,6 @@ import java.util.List;
 import com.google.api.services.vision.v1.Vision;
 
 public class VisionService {
-    private static final String API_KEY = "YOUR_API_KEY_HERE";
     private final Vision vision;
     public VisionService() {
         HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
@@ -38,14 +37,6 @@ public class VisionService {
         Image myimage = new Image();
         myimage.encodeContent(bout.toByteArray());
         return myimage;
-    }
-
-    public void buildVision() {
-        HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
-        GsonFactory jsonFactory = GsonFactory.getDefaultInstance();
-        Vision.Builder builder = new Vision.Builder(httpTransport, jsonFactory, null);
-        builder.setVisionRequestInitializer(new VisionRequestInitializer("API_KEY"));
-        Vision vision = builder.build();
     }
 
     public String annotateImage(Image image) throws IOException {

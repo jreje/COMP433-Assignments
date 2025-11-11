@@ -9,8 +9,11 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,10 +29,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 public class SketchTagger extends AppCompatActivity {
+    // ListView
+    ListView l;
     // DrawingArea variables
     View drawingAreaView;
     DrawingArea drawingArea;
@@ -38,12 +44,7 @@ public class SketchTagger extends AppCompatActivity {
     File drawingsDirectory;
     File[] drawingFilesList;
     // Gallery
-    ImageView drawing1View;
-    ImageView drawing2View;
-    ImageView drawing3View;
-    TextView drawing1Text;
-    TextView drawing2Text;
-    TextView drawing3Text;
+    ArrayList<GalleryItem> gallery = new ArrayList<>();
     // Database
     SQLiteDatabase mydb;
     // EditText
@@ -66,12 +67,9 @@ public class SketchTagger extends AppCompatActivity {
         drawingAreaView = findViewById(R.id.drawingArea);
         drawingArea = findViewById(R.id.drawingArea);
         // Gallery
-        drawing1View = findViewById(R.id.drawing1);
-        drawing2View = findViewById(R.id.drawing2);
-        drawing3View = findViewById(R.id.drawing3);
-        drawing1Text = findViewById(R.id.drawing1Text);
-        drawing2Text = findViewById(R.id.drawing2Text);
-        drawing3Text = findViewById(R.id.drawing3Text);
+        l = findViewById(R.id.galleryListView);
+        GalleryAdapter arr = new GalleryAdapter(this, gallery);
+        l.setAdapter(arr);
 
         drawingsDirectory = getFilesDir();
         drawingFilesList = drawingsDirectory.listFiles();
@@ -89,8 +87,9 @@ public class SketchTagger extends AppCompatActivity {
             currId = cursor.getInt(0) + 1;
         }
         cursor.close();
-
-        updateGallery();
+        cursor = mydb.rawQuery("SELECT * FROM DRAWINGS ORDER BY ID DESC", null);
+        updateGallery(cursor);
+        cursor.close();
     }
 
     void createDatabase() {
@@ -130,85 +129,38 @@ public class SketchTagger extends AppCompatActivity {
         return stream.toByteArray();
     }
 
-    private void updateGallery() {
+    private void updateGallery(Cursor cursor) {
         if (mydb == null) return;
-        Cursor cursor = mydb.rawQuery("SELECT * FROM DRAWINGS ORDER BY ID DESC LIMIT 3", null);
 
-        if (cursor.moveToFirst()) {
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
             byte[] imageBytes = cursor.getBlob(3);
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            drawing1View.setImageBitmap(bitmap);
+            ImageView image = new ImageView(this);
+            image.setImageBitmap(bitmap);
+
+            int id = cursor.getInt(0);
             String tags = cursor.getString(1);
             String time = cursor.getString(2);
             String text = getString(R.string.drawing_info, tags, time);
-            drawing1Text.setText(text);
-        }
-        if (cursor.moveToNext()) {
-            byte[] imageBytes = cursor.getBlob(3);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            drawing2View.setImageBitmap(bitmap);
-            String tags = cursor.getString(1);
-            String time = cursor.getString(2);
-            String text = getString(R.string.drawing_info, tags, time);
-            drawing2Text.setText(text);
-        }
-        if (cursor.moveToNext()) {
-            byte[] imageBytes = cursor.getBlob(3);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            drawing3View.setImageBitmap(bitmap);
-            String tags = cursor.getString(1);
-            String time = cursor.getString(2);
-            String text = getString(R.string.drawing_info, tags, time);
-            drawing3Text.setText(text);
+            TextView textView = new TextView(this);
+            textView.setText(text);
+
+            GalleryItem galleryItem = new GalleryItem(id, bitmap, text);
+
+            gallery.add(galleryItem);
+            cursor.moveToNext();
         }
         cursor.close();
     }
 
     public void find(View view) {
         String input = query.getText().toString();
-        Cursor cursor = mydb.rawQuery("SELECT * FROM DRAWINGS ORDER BY ID DESC LIMIT 3", null);
+        Cursor cursor = mydb.rawQuery("SELECT * FROM DRAWINGS ORDER BY ID DESC", null);
         if (!input.isEmpty()) {
             cursor.close();
-            cursor = mydb.rawQuery("SELECT * FROM DRAWINGS WHERE TAG LIKE '%" + input + "%' ORDER BY ID DESC LIMIT 3", null);
+            cursor = mydb.rawQuery("SELECT * FROM DRAWINGS WHERE TAG LIKE '%" + input + "%' ORDER BY ID DESC", null);
         }
-
-        ImageView[] imageViews = {drawing1View, drawing2View, drawing3View};
-        TextView[] textViews = {drawing1Text, drawing2Text, drawing3Text};
-
-        // Clear previous images/text
-        for (int i = 0; i < 3; i++) {
-            imageViews[i].setImageBitmap(null);
-            textViews[i].setText("unavailable");
-        }
-
-        if (cursor.moveToFirst()) {
-            byte[] imageBytes = cursor.getBlob(3);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            drawing1View.setImageBitmap(bitmap);
-            String tags = cursor.getString(1);
-            String time = cursor.getString(2);
-            String text = getString(R.string.drawing_info, tags, time);
-            drawing1Text.setText(text);
-        }
-        if (cursor.moveToNext()) {
-            byte[] imageBytes = cursor.getBlob(3);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            drawing2View.setImageBitmap(bitmap);
-            String tags = cursor.getString(1);
-            String time = cursor.getString(2);
-            String text = getString(R.string.drawing_info, tags, time);
-            drawing2Text.setText(text);
-        }
-        if (cursor.moveToNext()) {
-            byte[] imageBytes = cursor.getBlob(3);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            drawing3View.setImageBitmap(bitmap);
-            String tags = cursor.getString(1);
-            String time = cursor.getString(2);
-            String text = getString(R.string.drawing_info, tags, time);
-            drawing3Text.setText(text);
-        }
-
         cursor.close();
     }
     public void annotateImage(View view) throws IOException {
