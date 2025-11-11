@@ -20,8 +20,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.api.services.vision.v1.model.Image;
+
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -208,8 +211,22 @@ public class SketchTagger extends AppCompatActivity {
 
         cursor.close();
     }
-    public void annotateImage(View view) {
-        
+    public void annotateImage(View view) throws IOException {
+        drawingArea = findViewById(R.id.drawingArea);
+        Bitmap drawingBitmap = drawingArea.getBitmap();
+        Image image = service.bitmapToImage(drawingBitmap);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String result = service.annotateImage(image);
+                    runOnUiThread(() -> tagsInput.setText(result));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
 
