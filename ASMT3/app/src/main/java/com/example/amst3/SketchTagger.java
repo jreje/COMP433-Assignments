@@ -9,9 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,17 +17,14 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.api.services.vision.v1.model.Image;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
@@ -39,10 +34,6 @@ public class SketchTagger extends AppCompatActivity {
     // DrawingArea variables
     View drawingAreaView;
     DrawingArea drawingArea;
-
-    // File Variables
-    File drawingsDirectory;
-    File[] drawingFilesList;
     // Gallery
     ArrayList<GalleryItem> gallery = new ArrayList<>();
     // Database
@@ -54,6 +45,7 @@ public class SketchTagger extends AppCompatActivity {
     int currId;
     // Vision
     VisionService service;
+    byte[] currentImageBytes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +62,6 @@ public class SketchTagger extends AppCompatActivity {
         l = findViewById(R.id.galleryListView);
         GalleryAdapter arr = new GalleryAdapter(this, gallery);
         l.setAdapter(arr);
-
-        drawingsDirectory = getFilesDir();
-        drawingFilesList = drawingsDirectory.listFiles();
 
         // EditText
         tagsInput = findViewById(R.id.tagsInput);
@@ -112,6 +101,7 @@ public class SketchTagger extends AppCompatActivity {
         drawingArea = findViewById(R.id.drawingArea);
         Bitmap drawingBitmap = drawingArea.getBitmap();
         byte[] imageBytes = bitmapToBytes(drawingBitmap);
+        currentImageBytes = imageBytes;
 
         ContentValues cv = new ContentValues();
         cv.put("ID", currId);
@@ -131,6 +121,7 @@ public class SketchTagger extends AppCompatActivity {
 
     private void updateGallery(Cursor cursor) {
         if (mydb == null) return;
+        gallery.clear();
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -152,6 +143,7 @@ public class SketchTagger extends AppCompatActivity {
             cursor.moveToNext();
         }
         cursor.close();
+        l.setAdapter(new GalleryAdapter(this, gallery));
     }
 
     public void find(View view) {
@@ -161,6 +153,7 @@ public class SketchTagger extends AppCompatActivity {
             cursor.close();
             cursor = mydb.rawQuery("SELECT * FROM DRAWINGS WHERE TAG LIKE '%" + input + "%' ORDER BY ID DESC", null);
         }
+        updateGallery(cursor);
         cursor.close();
     }
     public void annotateImage(View view) throws IOException {
