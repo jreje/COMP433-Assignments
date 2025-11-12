@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AMST3">
         <activity android:name=".SketchTagger" />
+        <activity android:name=".PhotoTagger" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
